@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>sentiment analysis</title>
+</head>
+<body>
+    <section class="container">
+        <main class="box">
+            <h2>Welcome to sentiment prediction</h2>
+            <div class="prediction-box">
+
+            </div>
+            <form id="form" method="post" action="">
+                <textarea class="input-box" placeholder="enter your text...."></textarea>
+                <button class="btn" type="submit"> Submit </button>
+            </form>
+        </main>
+        
+       
+    </section>
+</body>
+<script>
+    let form=document.getElementById("form")
+   
+
+    form.addEventListener('submit',(e)=>{
+        e.preventDefault()
+        let text=document.getElementsByClassName("input-box")[0].value
+        fetchprediction(text)
+    })
+
+    
+
+    const fetchprediction = async(text) => {
+        let response = await fetch(" http://127.0.0.1:5000/",{
+        method: "POST",
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(text)
+        }
+        );
+        let predict=await response.json()
+        let positivebox = `<span id="close"> <i class="fa fa-times" aria-hidden="true"></i></span>  
+                <p class="predict"> prediction : <span><i class="fa fa-smile-o" aria-hidden="true"></i> Positive</span></p>`
+        let negativebox = `<span id="close"> <i class="fa fa-times" aria-hidden="true"></i></span>  
+                <p class="predict"> prediction : <span><i class="fa fa-frown-o" aria-hidden="true"></i> Negative</span></p>`
+        
+        if(predict === "POSITIVE"){
+            resultbox=document.getElementsByClassName("prediction-box")[0]
+            resultbox.style.display ="block"
+            resultbox.classList.add("green")
+            resultbox.insertAdjacentHTML('beforeend',positivebox)
+
+        }else{
+            resultbox=document.getElementsByClassName("prediction-box")[0]
+            resultbox.style.display ="block"
+            resultbox.classList.add("red")
+            resultbox.insertAdjacentHTML('beforeend',negativebox)
+        }
+
+        let close=document.getElementById("close")
+        if(close){
+        close.addEventListener('click',()=>{
+        let predictbox=document.getElementsByClassName("prediction-box")[0]
+        predictbox.style.display="none"
+        predictbox.className="prediction-box"
+        predictbox.innerHTML=''
+        document.getElementsByClassName("input-box")[0].value = ""
+    
+    })
+    }
+    }
+
+</script>
+</html>
